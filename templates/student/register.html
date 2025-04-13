@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('student_register') }}" class="active">Student Registration</a></li>
+                    <li><a href="{{ url_for('student_portal') }}">Student Portal</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="card-title mb-0">Register for CBT Exam</h3>
+                                <p class="mb-0">Enter your details to schedule your exam</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="steps-container mb-4">
+                                    <div class="steps">
+                                        <div class="step active" data-step="1">
+                                            <div class="step-circle">1</div>
+                                            <div class="step-text">Enter Matric Number</div>
+                                        </div>
+                                        <div class="step" data-step="2">
+                                            <div class="step-circle">2</div>
+                                            <div class="step-text">Confirm Details</div>
+                                        </div>
+                                        <div class="step" data-step="3">
+                                            <div class="step-circle">3</div>
+                                            <div class="step-text">Complete Registration</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 1: Enter Matric Number -->
+                                <div class="step-content active" id="step1Content">
+                                    <form id="matricForm" class="mb-3">
+                                        <div class="form-group mb-3">
+                                            <label for="matricNumber" class="form-label">Matriculation Number</label>
+                                            <input 
+                                                type="text" 
+                                                id="matricNumber" 
+                                                name="matricNumber" 
+                                                class="form-control" 
+                                                placeholder="Enter your matriculation number (e.g., 220903042)"
+                                                required
+                                            >
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-info-circle text-primary mr-1"></i>
+                                                Enter your 9-digit matriculation number
+                                            </small>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">
+                                                Next Step
+                                                <i class="fas fa-arrow-right ml-2"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Step 2: Confirm Details -->
+                                <div class="step-content" id="step2Content">
+                                    <div class="alert alert-info mb-4">
+                                        <h4 class="alert-heading">Student Information</h4>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Matriculation Number:</strong>
+                                                <div id="confirmMatric"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Full Name:</strong>
+                                                <div id="confirmName"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Level:</strong>
+                                                <div id="confirmLevel"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Department:</strong>
+                                                <div id="confirmDepartment"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <form id="confirmForm" action="{{ url_for('student_register') }}" method="post">
+                                        <input type="hidden" id="hiddenMatricNumber" name="matricNumber">
+                                        <div class="form-group mb-3">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <input 
+                                                type="email" 
+                                                id="email" 
+                                                name="email" 
+                                                class="form-control" 
+                                                placeholder="Enter your email address"
+                                                required
+                                            >
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-info-circle text-primary mr-1"></i>
+                                                Your exam details will be sent to this email
+                                            </small>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <button type="button" id="backToStep1" class="btn btn-outline-primary">
+                                                <i class="fas fa-arrow-left mr-2"></i>
+                                                Back
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                Complete Registration
+                                                <i class="fas fa-check-circle ml-2"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Step 1: Matric Number Form
+            const matricForm = document.getElementById('matricForm');
+            let studentData = null;
+            
+            matricForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const matricNumber = document.getElementById('matricNumber').value;
+                
+                if (!matricNumber) {
+                    showToast('Error', 'Please enter your matriculation number.', 'error');
+                    return;
+                }
+                
+                // In a real application, this would be an API call
+                // For demo purposes, we'll use mock data
+                if (matricNumber === '220903042') {
+                    studentData = {
+                        matricNumber: '220903042',
+                        fullName: 'John Doe',
+                        level: '100L',
+                        department: 'Computer Science'
+                    };
+                    
+                    // Fill confirmation details
+                    document.getElementById('confirmMatric').textContent = studentData.matricNumber;
+                    document.getElementById('confirmName').textContent = studentData.fullName;
+                    document.getElementById('confirmLevel').textContent = studentData.level;
+                    document.getElementById('confirmDepartment').textContent = studentData.department;
+                    document.getElementById('hiddenMatricNumber').value = studentData.matricNumber;
+                    
+                    // Go to step 2
+                    goToStep(2);
+                } else {
+                    showToast('Error', 'Student not found. Please check your matriculation number.', 'error');
+                }
+            });
+            
+            // Back button
+            document.getElementById('backToStep1').addEventListener('click', function() {
+                goToStep(1);
+            });
+        });
+    </script>
+</body>
+</html>

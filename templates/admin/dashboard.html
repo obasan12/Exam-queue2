@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, Admin</span>
+                    <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard</a></li>
+                    <li><a href="{{ url_for('admin_queue') }}">Queue Monitor</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="dashboard py-4">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h2>Admin Dashboard</h2>
+                    <div class="action-buttons">
+                        <button id="exportBtn" data-modal-target="exportModal" class="btn btn-secondary">
+                            <i class="fas fa-download mr-2"></i> Export Data
+                        </button>
+                        <button id="uploadBtn" data-modal-target="uploadModal" class="btn btn-primary">
+                            <i class="fas fa-upload mr-2"></i> Upload Students
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Students</h3>
+                            <p id="totalStudents">{{ stats.totalStudents }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Scheduled</h3>
+                            <p id="totalScheduled">{{ stats.totalScheduled }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>100L Students</h3>
+                            <p id="level100">{{ stats.levelDistribution['100L'] }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>200L Students</h3>
+                            <p id="level200">{{ stats.levelDistribution['200L'] }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Filter Students</h3>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="centerFilter">Exam Center</label>
+                            <select id="centerFilter" class="form-control">
+                                <option value="all">All Centers  class="form-control">
+                                <option value="all">All Centers</option>
+                                <option value="ICT1">ICT1</option>
+                                <option value="ICT2">ICT2</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="timeFilter">Time Slot</label>
+                            <select id="timeFilter" class="form-control">
+                                <option value="all">All Time Slots</option>
+                                <option value="9:00 AM">9:00 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="1:00 PM">1:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="levelFilter">Level</label>
+                            <select id="levelFilter" class="form-control">
+                                <option value="all">All Levels</option>
+                                <option value="100L">100L</option>
+                                <option value="200L">200L</option>
+                            </select>
+                        </div>
+                        <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </div>
+
+                <div class="student-list">
+                    <h3>Scheduled Students</h3>
+                    <div class="table-responsive">
+                        <table id="studentsTable" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Matric Number</th>
+                                    <th>Full Name</th>
+                                    <th>Level</th>
+                                    <th>Department</th>
+                                    <th>Exam Time</th>
+                                    <th>Exam Center</th>
+                                    <th>Token ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{ student.matricNumber }}</td>
+                                    <td>{{ student.fullName }}</td>
+                                    <td>{{ student.level }}</td>
+                                    <td>{{ student.department }}</td>
+                                    <td>{{ student.examTime }}</td>
+                                    <td>{{ student.examCenter }}</td>
+                                    <td>{{ student.tokenId }}</td>
+                                    <td>
+                                        {% if student.status == 'Present' %}
+                                        <span class="badge badge-success">Present</span>
+                                        {% elif student.status == 'Absent' %}
+                                        <span class="badge badge-danger">Absent</span>
+                                        {% else %}
+                                        <span class="badge badge-warning">Scheduled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success mark-present" data-matric="{{ student.matricNumber }}">Present</button>
+                                        <button class="btn btn-sm btn-danger mark-absent" data-matric="{{ student.matricNumber }}">Absent</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Modal -->
+        <div id="uploadModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Upload Student Data</h4>
+                        <button type="button" class="close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="csvFile">Select CSV File</label>
+                                <input type="file" id="csvFile" name="file" accept=".csv" class="form-control" required>
+                                <small class="form-text text-muted">CSV should contain columns: Matric Number, Full Name, Level, Department</small>
+                            </div>
+                            <div id="csvPreview" style="display: none;">
+                                <h5 class="mt-4">CSV Preview</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Matric Number</th>
+                                                <th>Full Name</th>
+                                                <th>Level</th>
+                                                <th>Department</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="csvPreviewBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Modal -->
+        <div id="exportModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Export Student Data</h4>
+                        <button type="button" class="close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="exportForm">
+                            <div class="form-group">
+                                <label for="exportCenter">Exam Center</label>
+                                <select id="exportCenter" name="center" class="form-control">
+                                    <option value="all">All Centers</option>
+                                    <option value="ICT1">ICT1</option>
+                                    <option value="ICT2">ICT2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exportTimeSlot">Time Slot</label>
+                                <select id="exportTimeSlot" name="timeSlot" class="form-control">
+                                    <option value="all">All Time Slots</option>
+                                    <option value="9:00 AM">9:00 AM</option>
+                                    <option value="11:00 AM">11:00 AM</option>
+                                    <option value="1:00 PM">1:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exportLevel">Level</label>
+                                <select id="exportLevel" name="level" class="form-control">
+                                    <option value="all">All Levels</option>
+                                    <option value="100L">100L</option>
+                                    <option value="200L">200L</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Export</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Export form submission
+            const exportForm = document.getElementById('exportForm');
+            if (exportForm) {
+                exportForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const center = document.getElementById('exportCenter').value;
+                    const timeSlot = document.getElementById('exportTimeSlot').value;
+                    const level = document.getElementById('exportLevel').value;
+                    
+                    window.location.href = `/api/export-students?center=${center}&timeSlot=${timeSlot}&level=${level}`;
+                    
+                    // Close modal
+                    const modal = exportForm.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

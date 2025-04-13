@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('student_register') }}">Student Registration</a></li>
+                    <li><a href="{{ url_for('student_portal') }}" class="active">Student Portal</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="card-title mb-0">Check Your Exam Status</h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <form id="checkStatusForm">
+                                    <div class="form-group mb-3">
+                                        <label for="matricNumber" class="form-label">Matriculation Number</label>
+                                        <input type="text" id="matricNumber" name="matricNumber" class="form-control" placeholder="e.g. 220903042" required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="tokenId" class="form-label">Exam Token</label>
+                                        <input type="text" id="tokenId" name="tokenId" class="form-control" placeholder="e.g. EX-2023-12345" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary w-100">Check Status</button>
+                                    </div>
+                                </form>
+
+                                <div id="statusResult" class="mt-4" style="display: none;">
+                                    <div class="alert alert-success">
+                                        <h4 class="alert-heading">Exam Information</h4>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Matriculation Number:</strong>
+                                                <div id="resultMatric"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Full Name:</strong>
+                                                <div id="resultName"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Level:</strong>
+                                                <div id="resultLevel"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Department:</strong>
+                                                <div id="resultDepartment"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Exam Time:</strong>
+                                                <div id="resultTime"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Exam Center:</strong>
+                                                <div id="resultCenter"></div>
+                                            </div>
+                                            <div class="col-12 mb-2">
+                                                <strong>Status:</strong>
+                                                <div id="resultStatus" class="badge badge-warning"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkStatusForm = document.getElementById('checkStatusForm');
+            const statusResult = document.getElementById('statusResult');
+            
+            checkStatusForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const matricNumber = document.getElementById('matricNumber').value;
+                const tokenId = document.getElementById('tokenId').value;
+                
+                fetch('/api/check-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        matricNumber: matricNumber,
+                        tokenId: tokenId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showToast('Error', data.error, 'error');
+                        statusResult.style.display = 'none';
+                    } else {
+                        document.getElementById('resultMatric').textContent = data.matricNumber;
+                        document.getElementById('resultName').textContent = data.fullName;
+                        document.getElementById('resultLevel').textContent = data.level;
+                        document.getElementById('resultDepartment').textContent = data.department;
+                        document.getElementById('resultTime').textContent = data.examTime;
+                        document.getElementById('resultCenter').textContent = data.examCenter;
+                        
+                        const statusElement = document.getElementById('resultStatus');
+                        statusElement.textContent = data.status;
+                        
+                        // Update status badge color
+                        statusElement.className = 'badge';
+                        if (data.status === 'Present') {
+                            statusElement.classList.add('badge-success');
+                        } else if (data.status === 'Absent') {
+                            statusElement.classList.add('badge-danger');
+                        } else {
+                            statusElement.classList.add('badge-warning');
+                        }
+                        
+                        statusResult.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking status:', error);
+                    showToast('Error', 'Failed to check status. Please try again.', 'error');
+                    statusResult.style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

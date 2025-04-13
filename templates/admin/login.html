@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('student_register') }}">Student Registration</a></li>
+                    <li><a href="{{ url_for('student_portal') }}">Student Portal</a></li>
+                    <li><a href="{{ url_for('admin_login') }}" class="active">Admin Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="card-title mb-0">Admin Login</h3>
+                            </div>
+                            <div class="card-body p-4">
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        {% for category, message in messages %}
+                                            <div class="alert alert-{{ category }} mb-3">{{ message }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                                
+                                <form action="{{ url_for('admin_login') }}" method="post">
+                                    <div class="form-group mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" id="username" name="username" class="form-control" required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" id="password" name="password" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center">
+                                <p class="mb-0">Default credentials: admin / admin123</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

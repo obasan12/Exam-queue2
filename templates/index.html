@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+            <ul class="nav-list"></ul>
+                <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('student_register') }}">Student Registration</a></li>
+                <li><a href="{{ url_for('student_portal') }}">Student Portal</a></li>
+                <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+            </ul>
+            </div>
+        </nav>
+
+        <style>
+            .nav-list {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            }
+
+            .nav-list li {
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            padding: 10px;
+            transition: box-shadow 0.3s, transform 0.3s;
+            }
+
+            .nav-list li:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            }
+
+            .nav-list li a {
+            text-decoration: none;
+            padding: 10px 15px;
+            color: #007bff;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+            }
+
+            .nav-list li a.active,
+            .nav-list li a:hover {
+            background-color: #007bff;
+            color: #fff;
+            }
+        </style>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Welcome to the University CBT Exam System</h2>
+                    <p>A comprehensive solution for scheduling and managing computer-based tests for the Faculty of Science and Engineering.</p>
+                    <div class="hero-buttons">
+                        <a href="{{ url_for('student_register') }}" class="btn btn-primary">Register for Exam</a>
+                        <a href="{{ url_for('student_portal') }}" class="btn btn-outline-primary">Check Exam Status</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2>System Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Automated Scheduling</h3>
+                        <p>Intelligent scheduling system that assigns exam slots based on level and capacity.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <h3>Unique Exam Tokens</h3>
+                        <p>Secure token system for student verification and exam access.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Queue Management</h3>
+                        <p>Efficient management of student queues to minimize waiting time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Real-time Analytics</h3>
+                        <p>Comprehensive dashboard with real-time statistics and reports.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Register</h3>
+                        <p>Enter your matriculation number and email to register for the exam.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Get Scheduled</h3>
+                        <p>Receive your exam schedule with time, date, and venue details.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Attend Exam</h3>
+                        <p>Show up at the assigned time and venue with your exam token.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Complete Exam</h3>
+                        <p>Take your computer-based test and submit your answers.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq">
+            <div class="container">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I register for the exam?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>To register for the exam, click on the "Register for Exam" button and enter your matriculation number and email address. The system will verify your details and assign you an exam slot.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What should I bring to the exam?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>You should bring your university ID card, exam token (which you will receive after registration), and any other materials specified for your particular exam.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Can I reschedule my exam?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Rescheduling is only allowed in emergency situations. Please contact the exam administrator if you need to reschedule.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I check my exam status?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>You can check your exam status by clicking on the "Check Exam Status" button and entering your matriculation number and token ID.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

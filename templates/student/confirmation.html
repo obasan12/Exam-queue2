@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmation - CBT Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="University Logo">
+                    <h1>University CBT Exam System</h1>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('student_register') }}">Student Registration</a></li>
+                    <li><a href="{{ url_for('student_portal') }}">Student Portal</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow border-success">
+                            <div class="card-header bg-success text-white">
+                                <h3 class="card-title mb-0">Registration Successful</h3>
+                                <p class="mb-0">Your exam has been scheduled successfully</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="text-center mb-4">
+                                    <div class="d-inline-block p-3 bg-success text-white rounded-circle mb-3">
+                                        <i class="fas fa-check-circle fa-3x"></i>
+                                    </div>
+                                    <h4>Thank You!</h4>
+                                    <p class="text-muted">Your CBT exam has been scheduled. Please check your email for confirmation.</p>
+                                </div>
+
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Student Information</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Matriculation Number:</strong>
+                                                <div>{{ data.matricNumber }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Full Name:</strong>
+                                                <div>{{ data.fullName }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Level:</strong>
+                                                <div>{{ data.level }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Department:</strong>
+                                                <div>{{ data.department }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Email:</strong>
+                                                <div>{{ data.email }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Exam Details</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Exam Date:</strong>
+                                                <div>{{ data.examDate|default(now.strftime('%A, %B %d, %Y'), true) }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Exam Time:</strong>
+                                                <div>{{ data.examTime }}</div>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <strong>Exam Center:</strong>
+                                                <div>{{ data.examCenter }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card mb-4 border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Your Exam Token</h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <p class="text-muted mb-2">Present this token on the day of your exam</p>
+                                        <div class="bg-light p-3 rounded border">
+                                            <h3 class="mb-0 text-primary">{{ data.tokenId }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <h5 class="alert-heading">Important Information</h5>
+                                    <ul class="mb-0">
+                                        <li>Please arrive at least 30 minutes before your scheduled time.</li>
+                                        <li>Bring your university ID card and exam token.</li>
+                                        <li>No rescheduling is allowed except for emergencies.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="text-center">
+                                    <button id="printBtn" class="btn btn-outline-primary mr-2">
+                                        <i class="fas fa-print mr-2"></i>
+                                        Print Details
+                                    </button>
+                                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                        <i class="fas fa-home mr-2"></i>
+                                        Back to Home
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span class="current-year">2023</span> University CBT Exam System</p>
+            <p>Faculty of Science and Engineering</p>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Print functionality
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>
